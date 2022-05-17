@@ -1,13 +1,14 @@
 package com.felipepossari.schoolregistration.unit.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
-import com.felipepossari.schoolregistration.application.domain.Student;
+import com.felipepossari.schoolregistration.application.domain.Course;
+import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.CourseRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.CourseRegistrationUseCaseService;
 import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
-import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
+import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -68,5 +69,36 @@ class CourseRegistrationUseCaseServiceTest {
         assertEquals(ErrorReason.COURSE_ALREADY_REGISTERED.getCode(), ex.getErrorReason().getCode());
         verify(courseRepositoryPort, times(1)).findByName(course.getName());
         verify(courseRepositoryPort, never()).create(any(Course.class));
+    }
+
+    @Test
+    void readByIdShouldReturnCourseIfItDoesExist() {
+        // given
+        Course courseRequest = CourseTestBuilder.aCourse().build();
+        Course expectedCourse = CourseTestBuilder.aCourse().build();
+
+        // and
+        when(courseRepositoryPort.findById(courseRequest.getId())).thenReturn(Optional.of(expectedCourse));
+
+        // when
+        var actualCourse = service.read(courseRequest.getId());
+
+        // then
+        assertEquals(expectedCourse, actualCourse);
+    }
+
+    @Test
+    void readByIdShouldThrowEntityNotFoundExceptionIfCourseDoesNotExist() {
+        // given
+        Course courseRequest = CourseTestBuilder.aCourse().build();
+
+        // and
+        when(courseRepositoryPort.findById(courseRequest.getId())).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.read(courseRequest.getId()));
+
+        // then
+        assertEquals(ErrorReason.COURSE_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
     }
 }
