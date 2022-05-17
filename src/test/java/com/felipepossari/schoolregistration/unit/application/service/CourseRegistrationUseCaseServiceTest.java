@@ -1,20 +1,25 @@
 package com.felipepossari.schoolregistration.unit.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
+import com.felipepossari.schoolregistration.application.domain.Student;
+import com.felipepossari.schoolregistration.application.exception.EnrollmentException;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.CourseRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.CourseRegistrationUseCaseService;
 import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
+import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
+import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.COURSE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -162,5 +167,54 @@ class CourseRegistrationUseCaseServiceTest {
         verify(courseRepositoryPort).findById(updatedCourse.getId());
         verify(courseRepositoryPort).findByNameAndIdNot(updatedCourse.getName(), updatedCourse.getId());
         verify(courseRepositoryPort, never()).update(any(Course.class));
+    }
+
+    @Test
+    void deleteShouldWorkFineIfCourseDoesExistAndItHasNoEnrolledStudent() {
+        // given
+        Course course = CourseTestBuilder.aCourse().build();
+
+        // and
+        when(courseRepositoryPort.findById(COURSE_ID)).thenReturn(Optional.of(course));
+        doNothing().when(courseRepositoryPort).delete(COURSE_ID);
+
+        // when
+        service.delete(COURSE_ID);
+
+        // then
+        verify(courseRepositoryPort).findById(COURSE_ID);
+        verify(courseRepositoryPort, atMostOnce()).delete(COURSE_ID);
+    }
+
+    @Test
+    void deleteShouldThrowEntityNotFoundIfCourseDoesNotExist() {
+        // given
+        when(courseRepositoryPort.findById(COURSE_ID)).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.delete(COURSE_ID));
+
+        // then
+        assertEquals(ErrorReason.COURSE_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(courseRepositoryPort).findById(COURSE_ID);
+        verify(courseRepositoryPort, never()).delete(COURSE_ID);
+    }
+
+    @Test
+    void deleteShouldThrowEnrollmentExceptionIfCourseIsEnrolledInAnyCourse() {
+        // given
+        Student student = StudentTestBuilder.aStudent().build();
+        Course course = CourseTestBuilder.aCourse().students(List.of(student)).build();
+
+        // and
+        when(courseRepositoryPort.findById(COURSE_ID)).thenReturn(Optional.of(course));
+
+        // when
+        var ex = assertThrows(EnrollmentException.class, () -> service.delete(COURSE_ID));
+
+        // then
+        assertEquals(ErrorReason.COURSE_HAS_ENROLLED_STUDENT.getCode(), ex.getErrorReason().getCode());
+        verify(courseRepositoryPort).findById(COURSE_ID);
+        verify(courseRepositoryPort, never()).delete(COURSE_ID);
     }
 }
