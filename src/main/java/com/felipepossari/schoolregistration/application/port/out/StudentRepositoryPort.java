@@ -4,15 +4,16 @@ import com.felipepossari.schoolregistration.application.domain.Student;
 import com.felipepossari.schoolregistration.application.domain.StudentFilter;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentRepositoryPort {
     Student create(Student student);
 
-    Student findById(Long id);
+    Optional<Student> findById(Long id);
 
-    Student findByEmail(String email);
+    Optional<Student> findByEmail(String email);
 
-    Student findByEmailAndIdNot(String email, Long id);
+    Optional<Student> findByEmailAndIdNot(String email, Long id);
 
     List<Student> findByFilter(StudentFilter filter);
 
