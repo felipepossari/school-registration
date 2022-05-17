@@ -33,7 +33,7 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
 
     @Override
     public List<Student> read(StudentFilter filter) {
-        return null;
+        return studentRepositoryPort.findByFilter(filter);
     }
 
     @Override
