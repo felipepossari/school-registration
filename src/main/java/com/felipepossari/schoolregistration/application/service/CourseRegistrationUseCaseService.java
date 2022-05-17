@@ -33,17 +33,22 @@ public class CourseRegistrationUseCaseService implements CourseRegistrationUseCa
 
     @Override
     public List<Course> read(CourseFilter filter) {
-        return null;
+        return courseRepositoryPort.findByFilter(filter);
     }
 
     @Override
-    public void update(Course Course) {
+    public void update(Course course) {
+        var currentCourse = retrieve(course.getId());
+        validateUniqueUpdateName(course.getName(), course.getId());
 
+        currentCourse.setName(course.getName());
+
+        courseRepositoryPort.update(currentCourse);
     }
 
     @Override
     public void delete(Long id) {
-
+        // document why this method is empty
     }
 
     private Course retrieve(Long id) {
@@ -57,6 +62,13 @@ public class CourseRegistrationUseCaseService implements CourseRegistrationUseCa
 
     private void validateUniqueName(String name) {
         if (courseRepositoryPort.findByName(name).isPresent()) {
+            log.warn(ErrorReason.COURSE_ALREADY_REGISTERED.getMessage());
+            throw new EntityRegisteredException(ErrorReason.COURSE_ALREADY_REGISTERED);
+        }
+    }
+
+    private void validateUniqueUpdateName(String name, Long id) {
+        if (courseRepositoryPort.findByNameAndIdNot(name, id).isPresent()) {
             log.warn(ErrorReason.COURSE_ALREADY_REGISTERED.getMessage());
             throw new EntityRegisteredException(ErrorReason.COURSE_ALREADY_REGISTERED);
         }
