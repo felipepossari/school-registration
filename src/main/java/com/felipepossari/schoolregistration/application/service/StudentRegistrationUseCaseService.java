@@ -2,6 +2,7 @@ package com.felipepossari.schoolregistration.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Student;
 import com.felipepossari.schoolregistration.application.domain.StudentFilter;
+import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
@@ -27,7 +28,7 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
 
     @Override
     public Student read(Long id) {
-        return null;
+        return retrieve(id);
     }
 
     @Override
@@ -45,8 +46,17 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
 
     }
 
-    private void validateUniqueEmail(String email){
-        if(studentRepositoryPort.findByEmail(email).isPresent()){
+    private Student retrieve(Long id) {
+        return studentRepositoryPort.findById(id)
+                .orElseThrow(() ->
+                {
+                    log.warn(ErrorReason.STUDENT_NOT_FOUND.getMessage());
+                    return new EntityNotFoundException(ErrorReason.STUDENT_NOT_FOUND);
+                });
+    }
+
+    private void validateUniqueEmail(String email) {
+        if (studentRepositoryPort.findByEmail(email).isPresent()) {
             log.warn(ErrorReason.EMAIL_ALREADY_REGISTERED.getMessage());
             throw new EntityRegisteredException(ErrorReason.EMAIL_ALREADY_REGISTERED);
         }
