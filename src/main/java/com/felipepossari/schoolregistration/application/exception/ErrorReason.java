@@ -7,7 +7,9 @@ import lombok.Getter;
 @Getter
 public enum ErrorReason {
 
-    EMAIL_ALREADY_REGISTERED("C001", "Email already registered");
+    EMAIL_ALREADY_REGISTERED("S001", "Email already registered"),
+    STUDENT_NOT_FOUND("S002", "Student not found");
+
 
     private String code;
     private String message;
