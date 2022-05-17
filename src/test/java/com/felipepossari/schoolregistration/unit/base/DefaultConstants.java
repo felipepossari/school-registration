@@ -9,5 +9,6 @@ public class DefaultConstants {
     public static String STUDENT_NAME = "Felipe";
     public static String STUDENT_EMAIL = "felipe@hotmail.com";
 
-
+    public static Long COURSE_ID = 2L;
+    public static String COURSE_NAME = "History";
 }
