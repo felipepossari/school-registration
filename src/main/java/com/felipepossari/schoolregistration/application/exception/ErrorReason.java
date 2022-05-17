@@ -11,7 +11,8 @@ public enum ErrorReason {
     STUDENT_NOT_FOUND("S002", "Student not found"),
     STUDENT_ENROLLED("S003", "Student enrolled in a course"),
 
-    COURSE_ALREADY_REGISTERED("C001", "Course already registered");
+    COURSE_ALREADY_REGISTERED("C001", "Course already registered"),
+    COURSE_NOT_FOUND("C002", "Course not found");
 
     private String code;
     private String message;
