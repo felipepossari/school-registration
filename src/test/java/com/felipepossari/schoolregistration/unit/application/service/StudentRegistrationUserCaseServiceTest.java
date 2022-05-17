@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.CollectionUtils;
 
@@ -22,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -104,7 +109,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void readByFilterShouldReturnAListOfStudentsIfTheyDoExist(){
+    void readByFilterShouldReturnAListOfStudentsIfTheyDoExist() {
         // given
         StudentFilter filter = StudentFilter.builder().build();
         Student studentRequest = StudentTestBuilder.aStudent().build();
@@ -121,7 +126,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void readByFilterShouldReturnAnEmptyListIfTheyDoNotExist(){
+    void readByFilterShouldReturnAnEmptyListIfTheyDoNotExist() {
         // given
         StudentFilter filter = StudentFilter.builder().build();
 
@@ -133,5 +138,67 @@ class StudentRegistrationUserCaseServiceTest {
 
         // then
         assertTrue(CollectionUtils.isEmpty(actualStudents));
+    }
+
+    @Test
+    void updateShouldWorkFineIfStudentIsValid() {
+        // given
+        Student updatedStudent = StudentTestBuilder.aStudent().name("Felipe Updated").build();
+        Student currentStudent = StudentTestBuilder.aStudent().build();
+
+        // and
+        when(studentRepositoryPort.findById(updatedStudent.getId())).thenReturn(Optional.of(currentStudent));
+        when(studentRepositoryPort.findByEmailAndIdNot(updatedStudent.getEmail(), updatedStudent.getId()))
+                .thenReturn(Optional.empty());
+        doNothing().when(studentRepositoryPort).update(currentStudent);
+
+        // when
+        service.update(updatedStudent);
+
+        // then
+        verify(studentRepositoryPort).findById(updatedStudent.getId());
+        verify(studentRepositoryPort).findByEmailAndIdNot(updatedStudent.getEmail(), updatedStudent.getId());
+        verify(studentRepositoryPort, atMostOnce()).update(currentStudent);
+    }
+
+    @Test
+    void updateShouldThrowEntityNotFoundExceptionIfStudentDoesNotExit(){
+        // given
+        Student updatedStudent = StudentTestBuilder.aStudent().name("Felipe Updated").build();
+
+        // and
+        when(studentRepositoryPort.findById(updatedStudent.getId())).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.update(updatedStudent));
+
+        // then
+        assertEquals(ErrorReason.STUDENT_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort).findById(updatedStudent.getId());
+        verify(studentRepositoryPort, never()).findByEmailAndIdNot(anyString(), anyLong());
+        verify(studentRepositoryPort, never()).update(any(Student.class));
+    }
+
+    @Test
+    void updateShouldThrowEntityRegisteredExceptionIfEmailUpdatedDoesBelongOtherUser(){
+        // given
+        Student updatedStudent = StudentTestBuilder.aStudent()
+                .name("Felipe Updated")
+                .email("felipeupdated@hotmail.com").build();
+        Student currentUser = StudentTestBuilder.aStudent().build();
+        Student otherUser = StudentTestBuilder.aStudent().email("felipeupdated@hotmail.com").build();
+
+        // and
+        when(studentRepositoryPort.findById(updatedStudent.getId())).thenReturn(Optional.of(currentUser));
+        when(studentRepositoryPort.findByEmailAndIdNot(updatedStudent.getEmail(), updatedStudent.getId()))
+                .thenReturn(Optional.of(otherUser));
+        // when
+        var ex = assertThrows(EntityRegisteredException.class, () -> service.update(updatedStudent));
+
+        // then
+        assertEquals(ErrorReason.EMAIL_ALREADY_REGISTERED.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort).findById(updatedStudent.getId());
+        verify(studentRepositoryPort).findByEmailAndIdNot(updatedStudent.getEmail(), updatedStudent.getId());
+        verify(studentRepositoryPort, never()).update(any(Student.class));
     }
 }
