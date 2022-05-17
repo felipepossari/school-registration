@@ -1,12 +1,12 @@
 package com.felipepossari.schoolregistration.unit.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Student;
+import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.StudentRegistrationUseCaseService;
 import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -66,5 +66,36 @@ class StudentRegistrationUserCaseServiceTest {
         assertEquals(ErrorReason.EMAIL_ALREADY_REGISTERED.getCode(), ex.getErrorReason().getCode());
         verify(studentRepositoryPort, times(1)).findByEmail(student.getEmail());
         verify(studentRepositoryPort, never()).create(any(Student.class));
+    }
+
+    @Test
+    void readByIdShouldReturnStudentIfHeOrSheDoesExist() {
+        // given
+        Student studentRequest = StudentTestBuilder.aStudent().build();
+        Student expectedStudent = StudentTestBuilder.aStudent().build();
+
+        // and
+        when(studentRepositoryPort.findById(studentRequest.getId())).thenReturn(Optional.of(expectedStudent));
+
+        // when
+        var actualStudent = service.read(studentRequest.getId());
+
+        // then
+        assertEquals(expectedStudent, actualStudent);
+    }
+
+    @Test
+    void readByIdShouldThrowEntityNotFoundExceptionIfStudentDoesNotExist() {
+        // given
+        Student studentRequest = StudentTestBuilder.aStudent().build();
+
+        // and
+        when(studentRepositoryPort.findById(studentRequest.getId())).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.read(studentRequest.getId()));
+
+        // then
+        assertEquals(ErrorReason.STUDENT_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
     }
 }
