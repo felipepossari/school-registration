@@ -12,4 +12,8 @@ public class Student {
     private String name;
     private String email;
     private List<Course> courses;
+
+    public boolean isEnrolledInAnyCourse(){
+        return courses != null && courses.isEmpty();
+    }
 }

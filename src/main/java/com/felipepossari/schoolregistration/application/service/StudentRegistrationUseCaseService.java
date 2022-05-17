@@ -5,6 +5,7 @@ import com.felipepossari.schoolregistration.application.domain.StudentFilter;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
+import com.felipepossari.schoolregistration.application.exception.EnrollmentException;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,16 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
 
     @Override
     public void delete(Long id) {
+        var student = retrieve(id);
+        validateCourseEnrollment(student);
+        studentRepositoryPort.delete(id);
+    }
 
+    private void validateCourseEnrollment(Student student) {
+        if(student.isEnrolledInAnyCourse()){
+            log.warn(ErrorReason.STUDENT_ENROLLED.getMessage());
+            throw new EnrollmentException(ErrorReason.STUDENT_ENROLLED);
+        }
     }
 
     private Student retrieve(Long id) {
