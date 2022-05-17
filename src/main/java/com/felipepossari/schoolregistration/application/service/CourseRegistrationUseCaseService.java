@@ -2,7 +2,10 @@ package com.felipepossari.schoolregistration.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.CourseFilter;
+import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
+import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.in.CourseRegistrationUseCase;
+import com.felipepossari.schoolregistration.application.port.out.CourseRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CourseRegistrationUseCaseService implements CourseRegistrationUseCase {
+
+    private final CourseRepositoryPort courseRepositoryPort;
+
     @Override
-    public Course create(Course Course) {
-        return null;
+    public Course create(Course course) {
+        validateUniqueName(course.getName());
+        return courseRepositoryPort.create(course);
     }
 
     @Override
@@ -36,5 +43,12 @@ public class CourseRegistrationUseCaseService implements CourseRegistrationUseCa
     @Override
     public void delete(Long id) {
 
+    }
+
+    private void validateUniqueName(String name) {
+        if (courseRepositoryPort.findByName(name).isPresent()) {
+            log.warn(ErrorReason.COURSE_ALREADY_REGISTERED.getMessage());
+            throw new EntityRegisteredException(ErrorReason.COURSE_ALREADY_REGISTERED);
+        }
     }
 }

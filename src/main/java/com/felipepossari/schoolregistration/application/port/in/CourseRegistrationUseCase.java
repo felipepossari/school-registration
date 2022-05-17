@@ -6,13 +6,13 @@ import com.felipepossari.schoolregistration.application.domain.CourseFilter;
 import java.util.List;
 
 public interface CourseRegistrationUseCase {
-    Course create(Course Course);
+    Course create(Course course);
 
     Course read(Long id);
 
     List<Course> read(CourseFilter filter);
 
-    void update(Course Course);
+    void update(Course course);
 
     void delete(Long id);
 }
