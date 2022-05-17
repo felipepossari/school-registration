@@ -30,7 +30,7 @@ public class StudentTestBuilder {
         return this;
     }
 
-    public StudentTestBuilder id(String name) {
+    public StudentTestBuilder name(String name) {
         this.name = name;
         return this;
     }
