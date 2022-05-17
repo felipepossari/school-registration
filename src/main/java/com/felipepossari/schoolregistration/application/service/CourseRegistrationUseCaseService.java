@@ -2,6 +2,7 @@ package com.felipepossari.schoolregistration.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.CourseFilter;
+import com.felipepossari.schoolregistration.application.exception.EnrollmentException;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
@@ -48,7 +49,16 @@ public class CourseRegistrationUseCaseService implements CourseRegistrationUseCa
 
     @Override
     public void delete(Long id) {
-        // document why this method is empty
+        var course = retrieve(id);
+        validateStudentEnrollment(course);
+        courseRepositoryPort.delete(id);
+    }
+
+    private void validateStudentEnrollment(Course course) {
+        if (course.hasAnyStudentEnrolled()) {
+            log.warn(ErrorReason.COURSE_HAS_ENROLLED_STUDENT.getMessage());
+            throw new EnrollmentException(ErrorReason.COURSE_HAS_ENROLLED_STUDENT);
+        }
     }
 
     private Course retrieve(Long id) {

@@ -11,4 +11,8 @@ public class Course {
     private Long id;
     private String name;
     private List<Student> students;
+
+    public boolean hasAnyStudentEnrolled() {
+        return students != null && !students.isEmpty();
+    }
 }
