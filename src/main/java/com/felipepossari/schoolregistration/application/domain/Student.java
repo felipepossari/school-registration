@@ -14,6 +14,6 @@ public class Student {
     private List<Course> courses;
 
     public boolean isEnrolledInAnyCourse(){
-        return courses != null && courses.isEmpty();
+        return courses != null && !courses.isEmpty();
     }
 }

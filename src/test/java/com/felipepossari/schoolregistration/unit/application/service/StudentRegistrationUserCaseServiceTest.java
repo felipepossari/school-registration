@@ -1,12 +1,16 @@
 package com.felipepossari.schoolregistration.unit.application.service;
 
+import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.Student;
 import com.felipepossari.schoolregistration.application.domain.StudentFilter;
+import com.felipepossari.schoolregistration.application.exception.EnrollmentException;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.StudentRegistrationUseCaseService;
+import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
+import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
 import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.STUDENT_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -162,7 +167,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void updateShouldThrowEntityNotFoundExceptionIfStudentDoesNotExit(){
+    void updateShouldThrowEntityNotFoundExceptionIfStudentDoesNotExist(){
         // given
         Student updatedStudent = StudentTestBuilder.aStudent().name("Felipe Updated").build();
 
@@ -200,5 +205,54 @@ class StudentRegistrationUserCaseServiceTest {
         verify(studentRepositoryPort).findById(updatedStudent.getId());
         verify(studentRepositoryPort).findByEmailAndIdNot(updatedStudent.getEmail(), updatedStudent.getId());
         verify(studentRepositoryPort, never()).update(any(Student.class));
+    }
+
+    @Test
+    void deleteShouldWorkFineIfStudentDoesExistAndHeOrSheHasNoEnrollment(){
+        // given
+        Student student = StudentTestBuilder.aStudent().build();
+
+        // and
+        when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.of(student));
+        doNothing().when(studentRepositoryPort).delete(STUDENT_ID);
+
+        // when
+        service.delete(STUDENT_ID);
+
+        // then
+        verify(studentRepositoryPort).findById(STUDENT_ID);
+        verify(studentRepositoryPort, atMostOnce()).delete(STUDENT_ID);
+    }
+
+    @Test
+    void deleteShouldThrowEntityNotFoundIfStudentDoesNotExist(){
+        // given
+        when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.delete(STUDENT_ID));
+
+        // then
+        assertEquals(ErrorReason.STUDENT_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort).findById(STUDENT_ID);
+        verify(studentRepositoryPort, never()).delete(STUDENT_ID);
+    }
+
+    @Test
+    void deleteShouldThrowEnrollmentExceptionIfStudentIsEnrolledInAnyCourse(){
+        // given
+        Course course = CourseTestBuilder.aCourse().build();
+        Student student = StudentTestBuilder.aStudent().courses(List.of(course)).build();
+
+        // and
+        when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.of(student));
+
+        // when
+        var ex = assertThrows(EnrollmentException.class, () -> service.delete(STUDENT_ID));
+
+        // then
+        assertEquals(ErrorReason.STUDENT_ENROLLED.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort).findById(STUDENT_ID);
+        verify(studentRepositoryPort, never()).delete(STUDENT_ID);
     }
 }
