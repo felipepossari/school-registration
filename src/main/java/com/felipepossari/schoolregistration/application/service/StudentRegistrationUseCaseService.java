@@ -37,8 +37,14 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
     }
 
     @Override
-    public void update(Student student) {
+    public void update(Student studentUpdated) {
+        var currentStudent = retrieve(studentUpdated.getId());
+        validateUniqueUpdateEmail(studentUpdated.getEmail(), studentUpdated.getId());
 
+        currentStudent.setEmail(studentUpdated.getEmail());
+        currentStudent.setName(studentUpdated.getName());
+
+        studentRepositoryPort.update(currentStudent);
     }
 
     @Override
@@ -57,6 +63,13 @@ public class StudentRegistrationUseCaseService implements StudentRegistrationUse
 
     private void validateUniqueEmail(String email) {
         if (studentRepositoryPort.findByEmail(email).isPresent()) {
+            log.warn(ErrorReason.EMAIL_ALREADY_REGISTERED.getMessage());
+            throw new EntityRegisteredException(ErrorReason.EMAIL_ALREADY_REGISTERED);
+        }
+    }
+
+    private void validateUniqueUpdateEmail(String email, Long id) {
+        if (studentRepositoryPort.findByEmailAndIdNot(email, id).isPresent()) {
             log.warn(ErrorReason.EMAIL_ALREADY_REGISTERED.getMessage());
             throw new EntityRegisteredException(ErrorReason.EMAIL_ALREADY_REGISTERED);
         }
