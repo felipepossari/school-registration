@@ -8,9 +8,13 @@ import java.util.List;
 public interface StudentRepositoryPort {
     Student create(Student student);
 
-    Student read(Long id);
+    Student findById(Long id);
 
-    List<Student> read(StudentFilter filter);
+    Student findByEmail(String email);
+
+    Student findByEmailAndIdNot(String email, Long id);
+
+    List<Student> findByFilter(StudentFilter filter);
 
     void update(Student student);
 
