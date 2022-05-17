@@ -1,19 +1,16 @@
 package com.felipepossari.schoolregistration.unit.application.service;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
-import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.CourseRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.CourseRegistrationUseCaseService;
 import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
-import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -21,6 +18,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,7 +37,7 @@ class CourseRegistrationUseCaseServiceTest {
     CourseRegistrationUseCaseService service;
 
     @Test
-    void createShouldCreateCourseIfNameIsNotRegistered(){
+    void createShouldCreateCourseIfNameIsNotRegistered() {
         // given
         Course course = CourseTestBuilder.aCourse().build();
 
@@ -100,5 +101,66 @@ class CourseRegistrationUseCaseServiceTest {
 
         // then
         assertEquals(ErrorReason.COURSE_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+    }
+
+    @Test
+    void updateShouldWorkFineIfCourseIsValid() {
+        // given
+        Course updatedCourse = CourseTestBuilder.aCourse().name("Course Updated").build();
+        Course currentCourse = CourseTestBuilder.aCourse().build();
+
+        // and
+        when(courseRepositoryPort.findById(updatedCourse.getId())).thenReturn(Optional.of(currentCourse));
+        when(courseRepositoryPort.findByNameAndIdNot(updatedCourse.getName(), updatedCourse.getId()))
+                .thenReturn(Optional.empty());
+        doNothing().when(courseRepositoryPort).update(currentCourse);
+
+        // when
+        service.update(updatedCourse);
+
+        // then
+        verify(courseRepositoryPort).findById(updatedCourse.getId());
+        verify(courseRepositoryPort).findByNameAndIdNot(updatedCourse.getName(), updatedCourse.getId());
+        verify(courseRepositoryPort, atMostOnce()).update(currentCourse);
+    }
+
+    @Test
+    void updateShouldThrowEntityNotFoundExceptionIfCourseDoesNotExist() {
+        // given
+        Course updatedCourse = CourseTestBuilder.aCourse().name("Course Updated").build();
+
+        // and
+        when(courseRepositoryPort.findById(updatedCourse.getId())).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.update(updatedCourse));
+
+        // then
+        assertEquals(ErrorReason.COURSE_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(courseRepositoryPort).findById(updatedCourse.getId());
+        verify(courseRepositoryPort, never()).findByNameAndIdNot(anyString(), anyLong());
+        verify(courseRepositoryPort, never()).update(any(Course.class));
+    }
+
+    @Test
+    void updateShouldThrowEntityRegisteredExceptionIfNameUpdatedDoesBelongOtherUser() {
+        // given
+        Course updatedCourse = CourseTestBuilder.aCourse()
+                .name("Course Updated").build();
+        Course currentUser = CourseTestBuilder.aCourse().build();
+        Course otherUser = CourseTestBuilder.aCourse().name("Course Updated").build();
+
+        // and
+        when(courseRepositoryPort.findById(updatedCourse.getId())).thenReturn(Optional.of(currentUser));
+        when(courseRepositoryPort.findByNameAndIdNot(updatedCourse.getName(), updatedCourse.getId()))
+                .thenReturn(Optional.of(otherUser));
+        // when
+        var ex = assertThrows(EntityRegisteredException.class, () -> service.update(updatedCourse));
+
+        // then
+        assertEquals(ErrorReason.COURSE_ALREADY_REGISTERED.getCode(), ex.getErrorReason().getCode());
+        verify(courseRepositoryPort).findById(updatedCourse.getId());
+        verify(courseRepositoryPort).findByNameAndIdNot(updatedCourse.getName(), updatedCourse.getId());
+        verify(courseRepositoryPort, never()).update(any(Course.class));
     }
 }

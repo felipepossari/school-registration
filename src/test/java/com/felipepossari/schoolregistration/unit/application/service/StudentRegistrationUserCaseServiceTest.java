@@ -9,14 +9,12 @@ import com.felipepossari.schoolregistration.application.exception.EntityRegister
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.StudentRegistrationUseCaseService;
-import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
 import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
 import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.CollectionUtils;
 
@@ -167,7 +165,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void updateShouldThrowEntityNotFoundExceptionIfStudentDoesNotExist(){
+    void updateShouldThrowEntityNotFoundExceptionIfStudentDoesNotExist() {
         // given
         Student updatedStudent = StudentTestBuilder.aStudent().name("Felipe Updated").build();
 
@@ -185,7 +183,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void updateShouldThrowEntityRegisteredExceptionIfEmailUpdatedDoesBelongOtherUser(){
+    void updateShouldThrowEntityRegisteredExceptionIfEmailUpdatedDoesBelongOtherUser() {
         // given
         Student updatedStudent = StudentTestBuilder.aStudent()
                 .name("Felipe Updated")
@@ -208,7 +206,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void deleteShouldWorkFineIfStudentDoesExistAndHeOrSheHasNoEnrollment(){
+    void deleteShouldWorkFineIfStudentDoesExistAndHeOrSheHasNoEnrollment() {
         // given
         Student student = StudentTestBuilder.aStudent().build();
 
@@ -225,7 +223,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void deleteShouldThrowEntityNotFoundIfStudentDoesNotExist(){
+    void deleteShouldThrowEntityNotFoundIfStudentDoesNotExist() {
         // given
         when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.empty());
 
@@ -239,7 +237,7 @@ class StudentRegistrationUserCaseServiceTest {
     }
 
     @Test
-    void deleteShouldThrowEnrollmentExceptionIfStudentIsEnrolledInAnyCourse(){
+    void deleteShouldThrowEnrollmentExceptionIfStudentIsEnrolledInAnyCourse() {
         // given
         Course course = CourseTestBuilder.aCourse().build();
         Student student = StudentTestBuilder.aStudent().courses(List.of(course)).build();
