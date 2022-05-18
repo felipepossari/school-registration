@@ -35,14 +35,29 @@ public class CourseRepositoryMapper {
 
     private List<StudentEntity> mapEntityCoursesIds(List<Student> courses) {
         return courses.stream()
-                .map(it -> StudentEntity.builder().id(it.getId()).build())
+                .map(this::mapStudent)
                 .collect(Collectors.toList());
     }
 
+    private StudentEntity mapStudent(Student student) {
+        return StudentEntity.builder()
+                .id(student.getId())
+                .name(student.getName())
+                .email(student.getEmail())
+                .build();
+    }
+
+    private Student mapStudent(StudentEntity student) {
+        return Student.builder()
+                .id(student.getId())
+                .name(student.getName())
+                .email(student.getEmail())
+                .build();
+    }
 
     private List<Student> mapDomainCoursesIds(List<StudentEntity> courses) {
         return courses.stream()
-                .map(it -> Student.builder().id(it.getId()).build())
+                .map(this::mapStudent)
                 .collect(Collectors.toList());
     }
 }
