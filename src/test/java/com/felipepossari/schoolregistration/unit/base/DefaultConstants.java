@@ -14,4 +14,5 @@ public class DefaultConstants {
 
     public static Long COURSE_ID = 2L;
     public static String COURSE_NAME = "History";
+    public static String COURSE_NAME_TOO_BIG = "HistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistoryHistory";
 }
