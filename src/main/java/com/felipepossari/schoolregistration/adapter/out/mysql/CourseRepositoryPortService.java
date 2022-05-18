@@ -80,4 +80,39 @@ public class CourseRepositoryPortService implements CourseRepositoryPort {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public List<Course> findEagerByFilter(CourseFilter filter) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT c from CourseEntity c left join fetch c.students s WHERE 1=1");
+
+        if (filter.getCourseId() > 0) {
+            sb.append(" AND c.id = :courseId");
+        }
+
+        if (filter.getStudentId() > 0) {
+            sb.append(" AND s.id = :studentId");
+        }
+
+        if (filter.isWithoutEnrollment()) {
+            sb.append(" AND s IS NULL");
+        }
+
+        Query query = entityManager.createQuery(sb.toString(), CourseEntity.class);
+
+        if (filter.getCourseId() > 0) {
+            query.setParameter("courseId", filter.getCourseId());
+        }
+
+        if (filter.getStudentId() > 0) {
+            query.setParameter("studentId", filter.getStudentId());
+        }
+
+        List<CourseEntity> courses = query
+                .setFirstResult(filter.getPage() * filter.getSize())
+                .setMaxResults(filter.getSize())
+                .getResultList();
+
+        return mapper.toDomain(courses);
+    }
 }
