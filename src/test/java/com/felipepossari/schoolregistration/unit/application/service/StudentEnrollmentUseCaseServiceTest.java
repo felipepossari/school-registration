@@ -215,4 +215,34 @@ class StudentEnrollmentUseCaseServiceTest {
         verify(courseRepositoryPort).findById(COURSE_ID);
         verify(studentRepositoryPort, never()).update(student);
     }
+
+    @Test
+    void cancelEnrollmentShouldThrowEntityNotFoundIfStudentDoesNotExist() {
+        // given
+        when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.cancelEnrollment(STUDENT_ID, COURSE_ID));
+
+        // then
+        assertEquals(ErrorReason.STUDENT_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort, never()).update(any(Student.class));
+    }
+
+    @Test
+    void cancelEnrollmentShouldThrowEntityNotFoundIfCourseDoesNotExist() {
+        // given
+        Student student = StudentTestBuilder.aStudent().build();
+
+        // and
+        when(studentRepositoryPort.findById(STUDENT_ID)).thenReturn(Optional.of(student));
+        when(courseRepositoryPort.findById(COURSE_ID)).thenReturn(Optional.empty());
+
+        // when
+        var ex = assertThrows(EntityNotFoundException.class, () -> service.cancelEnrollment(STUDENT_ID, COURSE_ID));
+
+        // then
+        assertEquals(ErrorReason.COURSE_NOT_FOUND.getCode(), ex.getErrorReason().getCode());
+        verify(studentRepositoryPort, never()).update(any(Student.class));
+    }
 }
