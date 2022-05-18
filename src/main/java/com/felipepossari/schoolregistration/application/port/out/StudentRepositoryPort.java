@@ -20,4 +20,6 @@ public interface StudentRepositoryPort {
     void update(Student student);
 
     void delete(Long id);
+
+    List<Student> findEagerByFielder(StudentFilter filter);
 }

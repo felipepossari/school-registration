@@ -20,4 +20,6 @@ public interface CourseRepositoryPort {
     void update(Course course);
 
     void delete(Long id);
+
+    List<Course> findEagerByFilter(CourseFilter filter);
 }
