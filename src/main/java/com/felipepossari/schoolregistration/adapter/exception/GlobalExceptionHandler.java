@@ -1,10 +1,11 @@
-package com.felipepossari.schoolregistration.adapter.in.web.exception;
+package com.felipepossari.schoolregistration.adapter.exception;
 
-import com.felipepossari.schoolregistration.adapter.in.web.exception.model.ErrorResponse;
+import com.felipepossari.schoolregistration.adapter.exception.model.ErrorResponse;
 import com.felipepossari.schoolregistration.application.exception.EnrollmentException;
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.EntityRegisteredException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -17,12 +18,14 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     public static final String UNKNOWN_ERROR_MESSAGE = "An unexpected error happened";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("Error: ", ex);
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.builder()

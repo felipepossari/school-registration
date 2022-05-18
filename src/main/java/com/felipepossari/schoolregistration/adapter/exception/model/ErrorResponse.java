@@ -1,4 +1,4 @@
-package com.felipepossari.schoolregistration.adapter.in.web.exception.model;
+package com.felipepossari.schoolregistration.adapter.exception.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
