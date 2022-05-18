@@ -1,7 +1,7 @@
 package com.felipepossari.schoolregistration.adapter.in.web.courses.v1;
 
-import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.StudentRequest;
-import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
+import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.request.CourseRequest;
+import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.response.CourseResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,23 +24,23 @@ public interface CourseApi {
 
     @PostMapping
     ResponseEntity<Void> post(
-            @Valid @RequestBody StudentRequest studentRequest,
+            @Valid @RequestBody CourseRequest courseRequest,
             BindingResult bindingResult,
             UriComponentsBuilder uriComponentsBuilder);
 
     @GetMapping("/{id}")
-    ResponseEntity<StudentResponse> getById(
+    ResponseEntity<CourseResponse> getById(
             @PathVariable(name = "id") Long id);
 
     @GetMapping
-    ResponseEntity<List<StudentResponse>> get(
+    ResponseEntity<List<CourseResponse>> get(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "20") int size);
 
     @PutMapping("/{id}")
     ResponseEntity<Void> put(
             @PathVariable(name = "id") Long id,
-            @Valid @RequestBody StudentRequest studentRequest,
+            @Valid @RequestBody CourseRequest courseRequest,
             BindingResult bindingResult);
 
     @DeleteMapping("/{id}")

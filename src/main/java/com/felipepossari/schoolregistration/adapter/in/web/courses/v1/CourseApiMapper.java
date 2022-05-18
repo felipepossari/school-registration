@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 @Component
 public class CourseApiMapper {
     public Course toDomain(CourseRequest courseRequest) {
-        return Course.builder()
-                .name(courseRequest.getName())
-                .build();
+        return buildCourseBuilder(courseRequest).build();
+    }
+
+    public Course toDomain(CourseRequest courseRequest, Long id) {
+        return buildCourseBuilder(courseRequest).id(id).build();
     }
 
     public CourseResponse toResponse(Course course) {
@@ -34,5 +36,10 @@ public class CourseApiMapper {
                 .page(page)
                 .size(size)
                 .build();
+    }
+
+    private Course.CourseBuilder buildCourseBuilder(CourseRequest courseRequest) {
+        return Course.builder()
+                .name(courseRequest.getName());
     }
 }
