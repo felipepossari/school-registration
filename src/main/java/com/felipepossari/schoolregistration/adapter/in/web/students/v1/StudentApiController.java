@@ -4,6 +4,7 @@ import com.felipepossari.schoolregistration.adapter.exception.InvalidRequestExce
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.StudentRequest;
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
+import com.felipepossari.schoolregistration.application.port.out.StudentEnrollmentUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class StudentApiController implements StudentApi {
 
     private final StudentApiRequestValidator requestValidator;
     private final StudentApiMapper mapper;
+
     private final StudentRegistrationUseCase useCase;
+    private final StudentEnrollmentUseCase enrollmentUseCase;
 
     @Override
     public ResponseEntity<Void> post(StudentRequest studentRequest,
@@ -64,6 +67,20 @@ public class StudentApiController implements StudentApi {
     public ResponseEntity<Void> delete(Long id) {
         log.info("Deleting student. Id: {}", id);
         useCase.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> enroll(Long id, Long courseId) {
+        log.info("Student enrollment. StudentId: {} CourseId: {}", id, courseId);
+        enrollmentUseCase.enroll(id, courseId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelEnrollment(Long id, Long courseId) {
+        log.info("Canceling student enrollment. StudentId: {} CourseId: {}", id, courseId);
+        enrollmentUseCase.cancelEnrollment(id, courseId);
         return ResponseEntity.noContent().build();
     }
 

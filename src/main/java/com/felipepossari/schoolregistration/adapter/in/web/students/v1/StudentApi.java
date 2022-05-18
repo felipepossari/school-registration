@@ -47,4 +47,14 @@ public interface StudentApi {
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(
             @PathVariable(name = "id") Long id);
+
+    @PutMapping("/{id}/enrollment/{courseId}")
+    ResponseEntity<Void> enroll(
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "courseId") Long courseId);
+
+    @DeleteMapping("/{id}/enrollment/{courseId}")
+    ResponseEntity<Void> cancelEnrollment(
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "courseId") Long courseId);
 }
