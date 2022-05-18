@@ -31,7 +31,7 @@ public class StudentApiMapper {
                 .collect(Collectors.toList());
     }
 
-    public StudentFilter toFilder(int page, int size) {
+    public StudentFilter toFilter(int page, int size) {
         return StudentFilter.builder()
                 .page(page)
                 .size(size)

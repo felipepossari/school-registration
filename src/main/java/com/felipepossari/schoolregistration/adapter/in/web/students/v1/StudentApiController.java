@@ -35,31 +35,38 @@ public class StudentApiController implements StudentApi {
 
     @Override
     public ResponseEntity<StudentResponse> getById(Long id) {
-        return null;
+        var student = useCase.read(id);
+        return ResponseEntity.ok(mapper.toResponse(student));
     }
 
     @Override
     public ResponseEntity<List<StudentResponse>> get(int page, int size) {
-        return null;
+        var students = useCase.read(mapper.toFilter(page, size));
+        return ResponseEntity.ok(mapper.toResponse(students));
     }
 
     @Override
     public ResponseEntity<Void> put(Long id,
                                     StudentRequest studentRequest,
                                     BindingResult bindingResult) {
-        return null;
+        validateRequest(bindingResult);
+        useCase.update(mapper.toDomain(studentRequest));
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Void> delete(Long id) {
-        return null;
+        useCase.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) { webDataBinder.setValidator(requestValidator);}
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.setValidator(requestValidator);
+    }
 
-    private void validateRequest(BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    private void validateRequest(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
         }
     }
