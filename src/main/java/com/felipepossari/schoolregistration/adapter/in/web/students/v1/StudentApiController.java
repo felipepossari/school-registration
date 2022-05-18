@@ -1,6 +1,6 @@
 package com.felipepossari.schoolregistration.adapter.in.web.students.v1;
 
-import com.felipepossari.schoolregistration.adapter.in.web.exception.InvalidRequestException;
+import com.felipepossari.schoolregistration.adapter.exception.InvalidRequestException;
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.StudentRequest;
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
@@ -56,7 +56,7 @@ public class StudentApiController implements StudentApi {
                                     BindingResult bindingResult) {
         log.info("Updating student. Id: {}", id);
         validateRequest(bindingResult);
-        useCase.update(mapper.toDomain(studentRequest));
+        useCase.update(mapper.toDomain(studentRequest, id));
         return ResponseEntity.noContent().build();
     }
 
