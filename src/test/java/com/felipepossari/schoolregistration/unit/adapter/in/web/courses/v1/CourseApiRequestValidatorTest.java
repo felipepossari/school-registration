@@ -2,7 +2,7 @@ package com.felipepossari.schoolregistration.unit.adapter.in.web.courses.v1;
 
 import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.CourseApiRequestValidator;
 import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.request.CourseRequest;
-import com.felipepossari.schoolregistration.unit.base.request.CourseRequestTestBuilder;
+import com.felipepossari.schoolregistration.base.request.CourseRequestTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +11,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 
 import static com.felipepossari.schoolregistration.application.exception.ErrorReason.COURSE_NAME_LENGTH_INVALID;
 import static com.felipepossari.schoolregistration.application.exception.ErrorReason.COURSE_NAME_NULL;
-import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.COURSE_NAME_TOO_BIG;
+import static com.felipepossari.schoolregistration.base.DefaultConstants.COURSE_NAME_TOO_BIG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

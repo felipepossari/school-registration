@@ -9,8 +9,8 @@ import com.felipepossari.schoolregistration.application.exception.EntityRegister
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import com.felipepossari.schoolregistration.application.service.StudentRegistrationUseCaseService;
-import com.felipepossari.schoolregistration.unit.base.domain.CourseTestBuilder;
-import com.felipepossari.schoolregistration.unit.base.domain.StudentTestBuilder;
+import com.felipepossari.schoolregistration.base.domain.CourseTestBuilder;
+import com.felipepossari.schoolregistration.base.domain.StudentTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Optional;
 
-import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.STUDENT_ID;
+import static com.felipepossari.schoolregistration.base.DefaultConstants.STUDENT_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

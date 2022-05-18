@@ -1,12 +1,11 @@
-package com.felipepossari.schoolregistration.unit.base.domain;
+package com.felipepossari.schoolregistration.base.domain;
 
 import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.Student;
-import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
+import com.felipepossari.schoolregistration.base.DefaultConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 

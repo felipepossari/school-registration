@@ -2,7 +2,7 @@ package com.felipepossari.schoolregistration.unit.adapter.in.web.students.v1;
 
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.StudentApiRequestValidator;
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.StudentRequest;
-import com.felipepossari.schoolregistration.unit.base.request.StudentRequestTestBuilder;
+import com.felipepossari.schoolregistration.base.request.StudentRequestTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,8 +14,8 @@ import static com.felipepossari.schoolregistration.application.exception.ErrorRe
 import static com.felipepossari.schoolregistration.application.exception.ErrorReason.STUDENT_EMAIL_NULL;
 import static com.felipepossari.schoolregistration.application.exception.ErrorReason.STUDENT_NAME_LENGTH_INVALID;
 import static com.felipepossari.schoolregistration.application.exception.ErrorReason.STUDENT_NAME_NULL;
-import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.STUDENT_EMAIL_TOO_BIG;
-import static com.felipepossari.schoolregistration.unit.base.DefaultConstants.STUDENT_NAME_TOO_BIG;
+import static com.felipepossari.schoolregistration.base.DefaultConstants.STUDENT_EMAIL_TOO_BIG;
+import static com.felipepossari.schoolregistration.base.DefaultConstants.STUDENT_NAME_TOO_BIG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -1,9 +1,8 @@
-package com.felipepossari.schoolregistration.unit.base.domain;
+package com.felipepossari.schoolregistration.base.domain;
 
-import antlr.collections.impl.IntRange;
 import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.Student;
-import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
+import com.felipepossari.schoolregistration.base.DefaultConstants;
 
 import java.util.ArrayList;
 import java.util.List;

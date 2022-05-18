@@ -1,4 +1,4 @@
-package com.felipepossari.schoolregistration.unit.base;
+package com.felipepossari.schoolregistration.base;
 
 public class DefaultConstants {
 

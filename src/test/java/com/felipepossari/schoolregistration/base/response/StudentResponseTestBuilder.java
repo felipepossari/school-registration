@@ -1,7 +1,7 @@
-package com.felipepossari.schoolregistration.unit.base.response;
+package com.felipepossari.schoolregistration.base.response;
 
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
-import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
+import com.felipepossari.schoolregistration.base.DefaultConstants;
 
 public class StudentResponseTestBuilder {
 
