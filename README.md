@@ -22,7 +22,7 @@ In order to run this project you have to install:
 
 ```bash  
 gradle test
-docker-compose up -d posterr-db
+docker-compose up -d school-db
 gradle :bootRun
 ```  
 Note: The integration test uses testcontainer so everytime it will start a new Mysql docker container, create the schema and run the tests.
