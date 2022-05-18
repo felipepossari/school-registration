@@ -1,10 +1,9 @@
 package com.felipepossari.schoolregistration.adapter.in.web.overview.v1;
 
-import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.response.CourseResponse;
 import com.felipepossari.schoolregistration.adapter.in.web.overview.v1.response.CourseOverviewResponse;
 import com.felipepossari.schoolregistration.adapter.in.web.overview.v1.response.StudentOverviewResponse;
-import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
 import com.felipepossari.schoolregistration.application.domain.Course;
+import com.felipepossari.schoolregistration.application.domain.CourseFilter;
 import com.felipepossari.schoolregistration.application.domain.Student;
 import org.springframework.stereotype.Component;
 
@@ -39,5 +38,15 @@ public class OverviewApiMapper {
     public List<StudentOverviewResponse> toStudentsResponse(List<Student> students) {
         return students.stream().map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    public CourseFilter toFilter(int page, int size, long studentId, long courseId, boolean withoutEnrollment) {
+        return CourseFilter.builder()
+                .page(page)
+                .size(size)
+                .courseId(courseId)
+                .studentId(studentId)
+                .withoutEnrollment(withoutEnrollment)
+                .build();
     }
 }
