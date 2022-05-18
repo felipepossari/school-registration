@@ -4,20 +4,31 @@ import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.Student;
 import com.felipepossari.schoolregistration.unit.base.DefaultConstants;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class StudentTestBuilder {
 
     private Long id = DefaultConstants.STUDENT_ID;
     private String name = DefaultConstants.STUDENT_NAME;
     private String email = DefaultConstants.STUDENT_EMAIL;
-    private List<Course> courses = null;
+    private List<Course> courses = new ArrayList<>();
 
     private StudentTestBuilder() {
     }
 
     public static StudentTestBuilder aStudent() {
         return new StudentTestBuilder();
+    }
+
+    public static StudentTestBuilder aStudentWithMaxEnrollments() {
+        var courses = IntStream.range(1,6).mapToObj(it -> CourseTestBuilder.aCourse().id((long) it).build())
+                .collect(Collectors.toList());
+
+        return new StudentTestBuilder().courses(courses);
     }
 
     public StudentTestBuilder id(Long id) {
