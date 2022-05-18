@@ -1,4 +1,4 @@
-package com.felipepossari.schoolregistration.application.port.out;
+package com.felipepossari.schoolregistration.application.port.in;
 
 public interface StudentEnrollmentUseCase {
 
