@@ -4,7 +4,7 @@ import com.felipepossari.schoolregistration.adapter.exception.InvalidRequestExce
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.StudentRequest;
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
-import com.felipepossari.schoolregistration.application.port.out.StudentEnrollmentUseCase;
+import com.felipepossari.schoolregistration.application.port.in.StudentEnrollmentUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

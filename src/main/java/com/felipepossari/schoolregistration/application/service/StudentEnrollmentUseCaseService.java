@@ -6,7 +6,7 @@ import com.felipepossari.schoolregistration.application.exception.EnrollmentExce
 import com.felipepossari.schoolregistration.application.exception.EntityNotFoundException;
 import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import com.felipepossari.schoolregistration.application.port.out.CourseRepositoryPort;
-import com.felipepossari.schoolregistration.application.port.out.StudentEnrollmentUseCase;
+import com.felipepossari.schoolregistration.application.port.in.StudentEnrollmentUseCase;
 import com.felipepossari.schoolregistration.application.port.out.StudentRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
