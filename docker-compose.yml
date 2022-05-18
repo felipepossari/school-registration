@@ -10,3 +10,14 @@ services:
       - "3306:3306"
     volumes:
       - .dbdata/:/var/lib/mysql
+  school-registration-api:
+    image: felipepossari/school-registration:1.0.0
+    depends_on:
+      - school-db
+    restart: always
+    environment:
+      - DB_URL=jdbc:mysql://school-db:3306/school
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+    ports:
+      - "8080:8080"
