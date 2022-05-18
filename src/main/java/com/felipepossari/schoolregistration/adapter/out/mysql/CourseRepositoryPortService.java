@@ -31,28 +31,19 @@ public class CourseRepositoryPortService implements CourseRepositoryPort {
     @Override
     public Optional<Course> findById(Long id) {
         var courseOpt = repository.findById(id);
-        if (courseOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(courseOpt.get()));
-        }
-        return Optional.empty();
+        return courseOpt.map(mapper::toDomain);
     }
 
     @Override
     public Optional<Course> findByName(String name) {
         var courseOpt = repository.findByName(name);
-        if (courseOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(courseOpt.get()));
-        }
-        return Optional.empty();
+        return courseOpt.map(mapper::toDomain);
     }
 
     @Override
     public Optional<Course> findByNameAndIdNot(String name, Long id) {
         var courseOpt = repository.findByNameAndIdNot(name, id);
-        if (courseOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(courseOpt.get()));
-        }
-        return Optional.empty();
+        return courseOpt.map(mapper::toDomain);
     }
 
     @Override
