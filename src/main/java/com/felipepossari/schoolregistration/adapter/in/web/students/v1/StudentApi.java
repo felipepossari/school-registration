@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -48,6 +47,7 @@ public interface StudentApi {
     })
     @GetMapping("/{id}")
     ResponseEntity<StudentResponse> getById(
+            @ApiParam(value = "Student Id")
             @PathVariable(name = "id") Long id);
 
     @ApiOperation(value = "Get the list of students")
