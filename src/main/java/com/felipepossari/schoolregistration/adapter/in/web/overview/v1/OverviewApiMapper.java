@@ -5,6 +5,7 @@ import com.felipepossari.schoolregistration.adapter.in.web.overview.v1.response.
 import com.felipepossari.schoolregistration.application.domain.Course;
 import com.felipepossari.schoolregistration.application.domain.CourseFilter;
 import com.felipepossari.schoolregistration.application.domain.Student;
+import com.felipepossari.schoolregistration.application.domain.StudentFilter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -40,8 +41,18 @@ public class OverviewApiMapper {
                 .collect(Collectors.toList());
     }
 
-    public CourseFilter toFilter(int page, int size, long studentId, long courseId, boolean withoutEnrollment) {
+    public CourseFilter toCourseFilter(int page, int size, long studentId, long courseId, boolean withoutEnrollment) {
         return CourseFilter.builder()
+                .page(page)
+                .size(size)
+                .courseId(courseId)
+                .studentId(studentId)
+                .withoutEnrollment(withoutEnrollment)
+                .build();
+    }
+
+    public StudentFilter toStudentFilter(int page, int size, long studentId, long courseId, boolean withoutEnrollment) {
+        return StudentFilter.builder()
                 .page(page)
                 .size(size)
                 .courseId(courseId)

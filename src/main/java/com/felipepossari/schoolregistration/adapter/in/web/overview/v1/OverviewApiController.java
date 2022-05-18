@@ -22,7 +22,9 @@ public class OverviewApiController implements OverviewApi {
                                                                      long studentId,
                                                                      long courseId,
                                                                      boolean withoutEnrollment) {
-        return null;
+        var filter = mapper.toStudentFilter(page, size, studentId, courseId, withoutEnrollment);
+        var students = overviewUseCase.getStudentOverview(filter);
+        return ResponseEntity.ok(mapper.toStudentsResponse(students));
     }
 
     @Override
@@ -31,7 +33,7 @@ public class OverviewApiController implements OverviewApi {
                                                                    long studentId,
                                                                    long courseId,
                                                                    boolean withoutEnrollment) {
-        var filter = mapper.toFilter(page, size, studentId, courseId, withoutEnrollment);
+        var filter = mapper.toCourseFilter(page, size, studentId, courseId, withoutEnrollment);
         var courses = overviewUseCase.getCoursesOverview(filter);
         return ResponseEntity.ok(mapper.toCoursesResponse(courses));
     }
