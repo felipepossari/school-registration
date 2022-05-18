@@ -8,7 +8,9 @@ import com.felipepossari.schoolregistration.application.exception.ErrorReason;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -56,6 +58,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<List<ErrorResponse>> handleEntityRegisteredException(EntityRegisteredException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(List.of(buildErrorResponse(ex.getErrorReason())));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<List<ErrorResponse>> handleInvalidRequestException(HttpMessageNotReadableException ex) {
+        log.error("Invalid body error. {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<List<ErrorResponse>> handleInvalidRequestException(HttpRequestMethodNotSupportedException ex) {
+        log.error("Invalid body error. {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     private List<ErrorResponse> buildErrorResponse(List<ObjectError> allErrors) {
