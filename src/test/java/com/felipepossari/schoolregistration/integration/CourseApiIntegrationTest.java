@@ -65,6 +65,50 @@ class CourseApiIntegrationTest {
         assertEquals(request.getName(), response.getName());
     }
 
+    @Test
+    void putShouldUpdateCourseIfRequestIsValid() throws Exception {
+        // given
+        CourseRequest request = CourseRequestTestBuilder.aCourseRequest().build();
+
+        // when
+        // create course
+        MvcResult mvcResult = mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .post("/v1/courses")
+                                .contentType(APPLICATION_JSON_VALUE)
+                                .content(om.writeValueAsString(request))
+                ).andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+
+        var location = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION).split("/");
+        long courseId = Long.parseLong(location[location.length - 1]);
+
+        // update course
+        CourseRequest updateRequest = CourseRequestTestBuilder.aCourseRequest().name("Course updated").build();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .put("/v1/courses/{id}", courseId)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .content(om.writeValueAsString(updateRequest))
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        // then
+        mvcResult = mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/v1/courses/{id}", courseId)
+                                .contentType(APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        CourseResponse response = parseCourseResponse(mvcResult.getResponse().getContentAsString());
+
+        assertNotNull(response);
+        assertEquals(courseId, response.getId().longValue());
+        assertEquals(updateRequest.getName(), response.getName());
+    }
+
+
     private CourseResponse parseCourseResponse(String contentAsString) throws IOException {
         return om.readValue(contentAsString, CourseResponse.class);
     }
