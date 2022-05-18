@@ -21,7 +21,7 @@ public class OverviewUseCaseService implements OverviewUseCase {
 
     @Override
     public List<Student> getStudentOverview(StudentFilter filter) {
-        return List.of();
+        return studentRepositoryPort.findEagerByFielder(filter);
     }
 
     @Override
