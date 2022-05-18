@@ -13,7 +13,25 @@ public class Student {
     private String email;
     private List<Course> courses;
 
-    public boolean isEnrolledInAnyCourse(){
+    public boolean isEnrolledInAnyCourse() {
         return courses != null && !courses.isEmpty();
+    }
+
+    public boolean isNotEnrolledIn(Course course) {
+        return courses != null &&
+                courses.stream()
+                        .noneMatch(enrolledCourse -> enrolledCourse.getId().longValue() == course.getId().longValue());
+    }
+
+    public boolean hasReachMaxEnrollment(int studentMaxEnrollments) {
+        return courses != null && courses.size() >= studentMaxEnrollments;
+    }
+
+    public void enroll(Course course) {
+        courses.add(course);
+    }
+
+    public void cancelEnrollment(Course course) {
+        courses.removeIf(enrolledCourse -> enrolledCourse.getId().longValue() == course.getId().longValue());
     }
 }

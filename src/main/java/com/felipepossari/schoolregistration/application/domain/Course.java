@@ -15,4 +15,8 @@ public class Course {
     public boolean hasAnyStudentEnrolled() {
         return students != null && !students.isEmpty();
     }
+
+    public boolean hasReachMaxEnrollment(int courseMaxEnrollments) {
+        return students != null && students.size() >= courseMaxEnrollments;
+    }
 }
