@@ -5,6 +5,7 @@ import com.felipepossari.schoolregistration.adapter.in.web.students.v1.request.S
 import com.felipepossari.schoolregistration.adapter.in.web.students.v1.response.StudentResponse;
 import com.felipepossari.schoolregistration.application.port.in.StudentRegistrationUseCase;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class StudentApiController implements StudentApi {
 
     private final StudentApiRequestValidator requestValidator;
@@ -26,6 +28,7 @@ public class StudentApiController implements StudentApi {
     public ResponseEntity<Void> post(StudentRequest studentRequest,
                                      BindingResult bindingResult,
                                      UriComponentsBuilder uriComponentsBuilder) {
+        log.info("Posting student");
         validateRequest(bindingResult);
         var student = mapper.toDomain(studentRequest);
         student = useCase.create(student);
@@ -35,12 +38,14 @@ public class StudentApiController implements StudentApi {
 
     @Override
     public ResponseEntity<StudentResponse> getById(Long id) {
+        log.info("Getting student by id. Id: {}", id);
         var student = useCase.read(id);
         return ResponseEntity.ok(mapper.toResponse(student));
     }
 
     @Override
     public ResponseEntity<List<StudentResponse>> get(int page, int size) {
+        log.info("Getting students. Page: {}, Size: {}", page, size);
         var students = useCase.read(mapper.toFilter(page, size));
         return ResponseEntity.ok(mapper.toResponse(students));
     }
@@ -49,6 +54,7 @@ public class StudentApiController implements StudentApi {
     public ResponseEntity<Void> put(Long id,
                                     StudentRequest studentRequest,
                                     BindingResult bindingResult) {
+        log.info("Updating student. Id: {}", id);
         validateRequest(bindingResult);
         useCase.update(mapper.toDomain(studentRequest));
         return ResponseEntity.noContent().build();
@@ -56,6 +62,7 @@ public class StudentApiController implements StudentApi {
 
     @Override
     public ResponseEntity<Void> delete(Long id) {
+        log.info("Deleting student. Id: {}", id);
         useCase.delete(id);
         return ResponseEntity.noContent().build();
     }
