@@ -31,28 +31,19 @@ public class StudentRepositoryPortService implements StudentRepositoryPort {
     @Override
     public Optional<Student> findById(Long id) {
         var studentOpt = repository.findById(id);
-        if (studentOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(studentOpt.get()));
-        }
-        return Optional.empty();
+        return studentOpt.map(mapper::toDomain);
     }
 
     @Override
     public Optional<Student> findByEmail(String email) {
         var studentOpt = repository.findByEmail(email);
-        if (studentOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(studentOpt.get()));
-        }
-        return Optional.empty();
+        return studentOpt.map(mapper::toDomain);
     }
 
     @Override
     public Optional<Student> findByEmailAndIdNot(String email, Long id) {
         var studentOpt = repository.findByEmailAndIdNot(email, id);
-        if (studentOpt.isPresent()) {
-            return Optional.of(mapper.toDomain(studentOpt.get()));
-        }
-        return Optional.empty();
+        return studentOpt.map(mapper::toDomain);
     }
 
     @Override
@@ -79,5 +70,40 @@ public class StudentRepositoryPortService implements StudentRepositoryPort {
     @Override
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<Student> findEagerByFielder(StudentFilter filter) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT s from StudentEntity s left join fetch s.courses c WHERE 1=1");
+
+        if (filter.getStudentId() > 0) {
+            sb.append(" AND s.id = :studentId");
+        }
+
+        if (filter.getCourseId() > 0) {
+            sb.append(" AND c.id = :courseId");
+        }
+
+        if (filter.isWithoutEnrollment()) {
+            sb.append(" AND c IS NULL");
+        }
+
+        Query query = entityManager.createQuery(sb.toString(), StudentEntity.class);
+
+        if (filter.getStudentId() > 0) {
+            query.setParameter("studentId", filter.getStudentId());
+        }
+
+        if (filter.getCourseId() > 0) {
+            query.setParameter("courseId", filter.getCourseId());
+        }
+
+        List<StudentEntity> students = query
+                .setFirstResult(filter.getPage() * filter.getSize())
+                .setMaxResults(filter.getSize())
+                .getResultList();
+
+        return mapper.toDomain(students);
     }
 }
