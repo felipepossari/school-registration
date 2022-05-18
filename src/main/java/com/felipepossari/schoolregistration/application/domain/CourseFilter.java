@@ -10,4 +10,7 @@ public class CourseFilter {
     private int page = 0;
     @Builder.Default
     private int size = 20;
+    private long studentId;
+    private long courseId;
+    private boolean withoutEnrollment;
 }
