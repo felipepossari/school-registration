@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.request.CourseRequest;
 import com.felipepossari.schoolregistration.adapter.in.web.courses.v1.response.CourseResponse;
 import com.felipepossari.schoolregistration.base.request.CourseRequestTestBuilder;
+import org.hibernate.dialect.Database;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +26,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class CourseApiIntegrationTest {
+class CourseApiIntegrationTest extends DatabaseContainerSetup {
 
     @Autowired
     ObjectMapper om;
